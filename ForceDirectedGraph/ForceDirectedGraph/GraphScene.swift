@@ -10,6 +10,8 @@ import SpriteKit
 
 final public class GraphScene {
     
+    private let forceDirectedGraphScene = ForceDirectedGraphScene()
+    
     public init(view: UIView) {
         print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
 /*
@@ -31,8 +33,9 @@ final public class GraphScene {
         }
   */
         
-        let forceDirectedGraphScene = ForceDirectedGraphScene(size: view.frame.size)
-        forceDirectedGraphScene
+        forceDirectedGraphScene.size = view.frame.size
+        
+        
         let skView = view as! SKView
         skView.showsFPS = true
         skView.showsNodeCount = true
@@ -45,6 +48,17 @@ final public class GraphScene {
         
         skView.presentScene(forceDirectedGraphScene)
 
+    }
+    
+    public func setGraphData(jsonFileName: String) -> Bool {
+        print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
+        
+        if forceDirectedGraphScene.setNodeList(jsonFileName) == false {
+            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set data.")
+            return false
+        }
+        
+        return false
     }
     
 }

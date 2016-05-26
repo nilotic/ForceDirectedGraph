@@ -112,17 +112,109 @@ final class ForceDirectedGraphDataManager {
     // MARK: - Init
     init() {
         print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
-
-        if setKawadaKawaiGraph() == false {
-            print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set kawadaKawai graph.")
-        }
     }
     
+    // MARK: Public
+    
+    func setKawadaKawaiGraph(jsonFileName: String) -> Bool {
+        print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
+        
+        if setGraphData(jsonFileName) == false {
+            print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set NodeInfo.")
+            return false
+        }
+        
+        if setShortestPathMatrix() == false {
+            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set shortestPathWeight Matrix.")
+            return false
+        }
+        
+        if setLMatrix() == false {
+            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set L(ideal length) Matrix.")
+            return false
+        }
+        
+        if setKMatrix() == false {
+            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set kMatrix.")
+            return false
+        }
+        
+        let initialEnergy = getEnergy()
+        var epsilon = initialEnergy / Float(canvas.count)
+        
+        // Get daltaM max
+        var deltaM: Float = 0
+        var deltaMIndexMax = 0
+        var deltaMMax      = getDeltaM(deltaMIndexMax)
+        
+        for i in 1..<canvas.count {
+            deltaM = getDeltaM(i)
+            if deltaM > deltaMMax {
+                deltaMMax      = deltaM
+                deltaMIndexMax = i
+            }
+        }
+        
+        // Epsilon minimizing loop
+        var subPasses = 0
+        var stop = false
+        var previousDeltaMMax: Float = 0
+        while (epsilon > KamadaKawaiInfo.minEpsilon) && stop == false {
+            previousDeltaMMax = deltaMMax + 1;
+            
+            // KamadaKawai loop: while the deltaM of the node with the largest deltaM > epsilon.
+            while (deltaMMax > epsilon) && ((previousDeltaMMax - deltaMMax) > 0.1) && stop == false {
+                
+                var deltas         = CGPoint(x: 0, y: 0)
+                var moveNodeDeltaM = deltaMMax
+                
+                // KK Inner loop while the node with the largest energy > epsilon
+                while (moveNodeDeltaM > epsilon) && stop == false {
+                    // Get the deltas which will move node towards the local minima
+                    deltas = getDeltas(deltaMIndexMax)
+                    
+                    // Set coords of node to old coord + changes
+                    canvas[deltaMIndexMax].point.x += deltas.x
+                    canvas[deltaMIndexMax].point.y += deltas.y
+                    
+                    // Recalculate the deltaM of the node w/ new values
+                    moveNodeDeltaM = getDeltaM(deltaMIndexMax)
+                    
+                    subPasses += 1
+                    if subPasses > KamadaKawaiInfo.maxPasses {
+                        stop = true
+                    }
+                }
+                
+                // Recalcualte deltaMs and find node with max
+                deltaMIndexMax = 0
+                deltaMMax = getDeltaM(0)
+                
+                for i in 1..<canvas.count {
+                    deltaM = getDeltaM(i)
+                    if deltaM > deltaMMax {
+                        deltaMMax = deltaM
+                        deltaMIndexMax = i
+                    }
+                }
+                
+            } // End of while
+            
+            epsilon -= epsilon / 4
+        } // End of while
+        
+        for info in canvas {
+            print(info.point)
+        }
+        return true
+    }
+
+    
     // MARK: Private
-    private func setGraphData() -> Bool {
+    private func setGraphData(jsonfileName: String) -> Bool {
         print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
         
-        guard let filePath = NSBundle.mainBundle().pathForResource("nodeInfoListTest", ofType: "json") else {
+        guard let filePath = NSBundle.mainBundle().pathForResource(jsonfileName, ofType: "json") else {
             print("Error: Failed to get the filePath.")
             return false
         }
@@ -196,12 +288,12 @@ final class ForceDirectedGraphDataManager {
                 }
                 
                 if canvas.count <= source || canvas.count <= target {
-                    print("DAILYHOTEL [\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to add the edge. CanvasCount: \(canvas.count), source: \(source), target: \(target)")
+                    print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to add the edge. CanvasCount: \(canvas.count), source: \(source), target: \(target)")
                     continue
                 }
                 
                 if addEdge(canvas[source], neighbor: canvas[target], weight: value) == false {
-                    print("DAILYHOTEL [\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to add the edge.")
+                    print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to add the edge.")
                 }
             }
             
@@ -598,100 +690,7 @@ final class ForceDirectedGraphDataManager {
         
         return CGPoint(x: CGFloat(x), y: CGFloat(y))
     }
-    
-    private func setKawadaKawaiGraph() -> Bool {
-        print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
-
-        if setGraphData() == false {
-            print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set NodeInfo.")
-            return false
-        }
-        
-        if setShortestPathMatrix() == false {
-            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set shortestPathWeight Matrix.")
-            return false
-        }
-        
-        if setLMatrix() == false {
-            print("DAILYHOTEL [\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set L(ideal length) Matrix.")
-            return false
-        }
-        
-        if setKMatrix() == false {
-            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set kMatrix.")
-            return false
-        }
-        
-        let initialEnergy = getEnergy()
-        var epsilon = initialEnergy / Float(canvas.count)
-        
-        // Get daltaM max
-        var deltaM: Float = 0
-        var deltaMIndexMax = 0
-        var deltaMMax      = getDeltaM(deltaMIndexMax)
-        
-        for i in 1..<canvas.count {
-            deltaM = getDeltaM(i)
-            if deltaM > deltaMMax {
-                deltaMMax      = deltaM
-                deltaMIndexMax = i
-            }
-        }
-        
-        // Epsilon minimizing loop
-        var subPasses = 0
-        var stop = false
-        var previousDeltaMMax: Float = 0
-        while (epsilon > KamadaKawaiInfo.minEpsilon) && stop == false {
-            previousDeltaMMax = deltaMMax + 1;
-            
-            // KamadaKawai loop: while the deltaM of the node with the largest deltaM > epsilon.
-            while (deltaMMax > epsilon) && ((previousDeltaMMax - deltaMMax) > 0.1) && stop == false {
-                
-                var deltas         = CGPoint(x: 0, y: 0)
-                var moveNodeDeltaM = deltaMMax
-                
-                // KK Inner loop while the node with the largest energy > epsilon
-                while (moveNodeDeltaM > epsilon) && stop == false {
-                    // Get the deltas which will move node towards the local minima
-                    deltas = getDeltas(deltaMIndexMax)
-                    
-                    // Set coords of node to old coord + changes
-                    canvas[deltaMIndexMax].point.x += deltas.x
-                    canvas[deltaMIndexMax].point.y += deltas.y
-                    
-                    // Recalculate the deltaM of the node w/ new values
-                    moveNodeDeltaM = getDeltaM(deltaMIndexMax)
-                    
-                    subPasses += 1
-                    if subPasses > KamadaKawaiInfo.maxPasses {
-                        stop = true
-                    }
-                }
-                
-                // Recalcualte deltaMs and find node with max
-                deltaMIndexMax = 0
-                deltaMMax = getDeltaM(0)
-
-                for i in 1..<canvas.count {
-                    deltaM = getDeltaM(i)
-                    if deltaM > deltaMMax {
-                        deltaMMax = deltaM
-                        deltaMIndexMax = i
-                    }
-                }
-            
-            } // End of while
- 
-            epsilon -= epsilon / 4
-        } // End of while
-        
-        for info in canvas {
-            print(info.point)
-        }
-        return true
-    }
-
+   
 }
 
 

@@ -101,6 +101,30 @@ final public class ForceDirectedGraphScene: SKScene {
     
     
     // MARK: - Function
+    // MARK: - Public
+    func setNodeList(jsonFileName: String) -> Bool {
+        print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
+        
+        if forceDirectedGraphDataManager.setKawadaKawaiGraph(jsonFileName) == false {
+            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set data.")
+            return false;
+        }
+        
+        // Add nodes
+        for vertex in forceDirectedGraphDataManager.canvas {
+            self.addChild(createNode(vertex))
+        }
+        
+        
+        // Set links
+        for vertex in forceDirectedGraphDataManager.canvas {
+            setLink(vertex)
+        }
+        
+        return true
+    }
+    
+    
     // MARK: - Private 
     private func selectNodeForTouch(touchLocation: CGPoint) {
         let touchedNode = self.nodeAtPoint(touchLocation)
@@ -110,7 +134,6 @@ final public class ForceDirectedGraphScene: SKScene {
             selectedNode = touchedNode
         }
     }
-  
     
     private func panForTranslation(translation: CGPoint) {
         guard let position = selectedNode?.position else {
@@ -119,7 +142,6 @@ final public class ForceDirectedGraphScene: SKScene {
         
         selectedNode?.position = CGPointMake(position.x + translation.x, position.y + translation.y)
     }
-
     
     
     override public func didMoveToView(view: SKView) {
@@ -135,11 +157,6 @@ final public class ForceDirectedGraphScene: SKScene {
         
         self.addChild(cameraNode)
         self.camera = cameraNode
-        
-        // Node
-        if setNodeList() == false {
-            print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set nodeList.")
-        }
         
         // Gesture
         pinchGestureRecognizer.addTarget(self, action: #selector(ForceDirectedGraphScene.pinchGestureRecognizerAction(_:)))
@@ -209,24 +226,6 @@ final public class ForceDirectedGraphScene: SKScene {
             CGPathCloseSubpath(pathToDraw)
             jointInfo.line.path = pathToDraw
         }
-    }
-    
-    
-    private func setNodeList() -> Bool {
-        print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
-
-        // Add nodes
-        for vertex in forceDirectedGraphDataManager.canvas {
-            self.addChild(createNode(vertex))
-        }
-        
-        
-        // Set links
-        for vertex in forceDirectedGraphDataManager.canvas {
-            setLink(vertex)
-        }
-        
-        return true
     }
     
     private func createNode(vertex: Vertex) -> SKShapeNode {

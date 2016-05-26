@@ -16,7 +16,7 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         let graphScene = GraphScene(view: self.view)
-        
+        graphScene.setGraphData("nodeInfoListTest")
     }
 
     override func didReceiveMemoryWarning() {
