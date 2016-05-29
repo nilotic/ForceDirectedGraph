@@ -244,6 +244,14 @@ final public class ForceDirectedGraphScene: SKScene {
         circleNode.fillColor                    = NodeColor.getNodeColor(vertex.group)
         
         vertex.node = circleNode
+        
+        // Label
+        let labelNode       = SKLabelNode()
+        labelNode.text      = vertex.name
+        labelNode.fontSize  = 11.0
+        labelNode.fontColor = UIColor.blackColor()
+        circleNode.addChild(labelNode)
+        
         return circleNode
     }
     
