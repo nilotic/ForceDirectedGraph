@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'ForceDirectedGraphSwift_Example' do
+  pod 'ForceDirectedGraphSwift', :path => '../'
+
+  target 'ForceDirectedGraphSwift_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
