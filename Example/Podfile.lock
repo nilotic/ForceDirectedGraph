@@ -1,0 +1,16 @@
+PODS:
+  - ForceDirectedGraphSwift (0.1.0)
+
+DEPENDENCIES:
+  - ForceDirectedGraphSwift (from `../`)
+
+EXTERNAL SOURCES:
+  ForceDirectedGraphSwift:
+    :path: ../
+
+SPEC CHECKSUMS:
+  ForceDirectedGraphSwift: 2d966beee1f5760cf3b163a9e57dcdbb75e6576c
+
+PODFILE CHECKSUM: b60b4fae6a0e0363ecdceea336a03fbbe05d5499
+
+COCOAPODS: 1.0.1

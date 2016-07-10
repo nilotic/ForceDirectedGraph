@@ -14,6 +14,10 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		86FA2DC81D31DA9200A9558A /* nodeInfoList.json in Resources */ = {isa = PBXBuildFile; fileRef = 86FA2DC61D31DA9200A9558A /* nodeInfoList.json */; };
+		86FA2DC91D31DA9200A9558A /* nodeInfoList.json in Resources */ = {isa = PBXBuildFile; fileRef = 86FA2DC61D31DA9200A9558A /* nodeInfoList.json */; };
+		86FA2DCA1D31DA9200A9558A /* nodeInfoListTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 86FA2DC71D31DA9200A9558A /* nodeInfoListTest.json */; };
+		86FA2DCB1D31DA9200A9558A /* nodeInfoListTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 86FA2DC71D31DA9200A9558A /* nodeInfoListTest.json */; };
 		B4FCDC0184EC689198CAC247 /* Pods_ForceDirectedGraphSwift_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83946149AEE590755CE340F8 /* Pods_ForceDirectedGraphSwift_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +48,8 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		686BC9513D8147EAFA2EB256 /* Pods_ForceDirectedGraphSwift_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ForceDirectedGraphSwift_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83946149AEE590755CE340F8 /* Pods_ForceDirectedGraphSwift_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ForceDirectedGraphSwift_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		86FA2DC61D31DA9200A9558A /* nodeInfoList.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = nodeInfoList.json; sourceTree = "<group>"; };
+		86FA2DC71D31DA9200A9558A /* nodeInfoListTest.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = nodeInfoListTest.json; sourceTree = "<group>"; };
 		92778ACD48346239D209AC33 /* Pods-ForceDirectedGraphSwift_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ForceDirectedGraphSwift_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-ForceDirectedGraphSwift_Example/Pods-ForceDirectedGraphSwift_Example.release.xcconfig"; sourceTree = "<group>"; };
 		9A3F37C4E74592235687952E /* ForceDirectedGraphSwift.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ForceDirectedGraphSwift.podspec; path = ../ForceDirectedGraphSwift.podspec; sourceTree = "<group>"; };
 		D02903859BC35704510F91B7 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -104,6 +110,8 @@
 		607FACD21AFB9204008FA782 /* Example for ForceDirectedGraphSwift */ = {
 			isa = PBXGroup;
 			children = (
+				86FA2DC61D31DA9200A9558A /* nodeInfoList.json */,
+				86FA2DC71D31DA9200A9558A /* nodeInfoListTest.json */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -249,6 +257,8 @@
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
+				86FA2DC81D31DA9200A9558A /* nodeInfoList.json in Resources */,
+				86FA2DCA1D31DA9200A9558A /* nodeInfoListTest.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +266,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86FA2DC91D31DA9200A9558A /* nodeInfoList.json in Resources */,
+				86FA2DCB1D31DA9200A9558A /* nodeInfoListTest.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,7 +451,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -477,7 +489,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -490,6 +502,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ForceDirectedGraphSwift/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -503,6 +516,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ForceDirectedGraphSwift/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
