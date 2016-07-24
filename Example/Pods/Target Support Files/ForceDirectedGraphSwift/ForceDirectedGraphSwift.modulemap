@@ -1,6 +1,0 @@
-framework module ForceDirectedGraphSwift {
-  umbrella header "ForceDirectedGraphSwift-umbrella.h"
-
-  export *
-  module * { export * }
-}
