@@ -267,6 +267,10 @@ final class ForceDirectedGraphDataManager {
         var deltaMIndexMax = 0
         var deltaMMax      = getDeltaM(deltaMIndexMax)
         
+        if canvas.count < 1 {
+            return false
+        }
+        
         for i in 1..<canvas.count {
             deltaM = getDeltaM(i)
             if deltaM > deltaMMax {
@@ -619,6 +623,10 @@ final class ForceDirectedGraphDataManager {
         var lij: Float     = 0
         var dxdyPow: Float = 0
         
+        if canvas.count <= 0 {
+            return 0
+        }
+        
         for i in 0..<canvas.count - 1 {
             for j in i+1..<canvas.count {
                 dx = Float(canvas[i].point.x - canvas[j].point.x)
@@ -643,6 +651,10 @@ final class ForceDirectedGraphDataManager {
         
         var xPartial: Float    = 0
         var yPartial: Float    = 0
+        
+        if lMatrix.count <= 0 {
+            return 0
+        }
         
         for j in 0..<lMatrix[i].count {
             if (i != j) {
