@@ -26,19 +26,19 @@ final public class GraphScene {
         skView.ignoresSiblingOrder = true
         
         /* Set the scale mode to scale to fit the window */
-        forceDirectedGraphScene.scaleMode = .AspectFill
+        forceDirectedGraphScene.scaleMode = .aspectFill
         
         skView.presentScene(forceDirectedGraphScene)
 
     }
     
-    public func setGraphData(jsonFileName: String) -> Bool {
+    public func setGraphData(_ jsonFileName: String) -> Bool {
         debugPrint(fdLog(#file, #function))
         
         return forceDirectedGraphScene.setNodeList(jsonFileName)
     }
     
-    public func setGraphData(nodes: [GraphNode], links: [GraphLink]) -> Bool {
+    public func setGraphData(_ nodes: [GraphNode], links: [GraphLink]) -> Bool {
         debugPrint(fdLog(#file, #function))
         
         return forceDirectedGraphScene.setNodeList(nodes, links: links)

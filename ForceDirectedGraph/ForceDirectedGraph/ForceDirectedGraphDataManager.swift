@@ -49,7 +49,7 @@ final class Path {
     var previous: Path!
     
     init() {
-        self.destination = Vertex(name: "", group: .None, gender: .None)
+        self.destination = Vertex(name: "", group: .none, gender: .none)
     }
     
     init(destination: Vertex) {
@@ -66,27 +66,27 @@ struct KamadaKawaiInfo {
 
 // MARK: - Enum
 enum GroupType: Int {
-    case None = 0
-    case Development
-    case Marketing
-    case Business
-    case Accounting
-    case Planning
-    case Design
-    case QualityAssurance
-    case HumanResources
-    case Finance
-    case Team1
-    case Team2
-    case Team3
-    case Team4
-    case Team5
+    case none = 0
+    case development
+    case marketing
+    case business
+    case accounting
+    case planning
+    case design
+    case qualityAssurance
+    case humanResources
+    case finance
+    case team1
+    case team2
+    case team3
+    case team4
+    case team5
 }
 
 enum Gender {
-    case None
-    case Man
-    case Woman
+    case none
+    case man
+    case woman
 }
 
 
@@ -111,23 +111,23 @@ final class ForceDirectedGraphDataManager {
     // MARK: - Function
     // MARK: - Init
     init() {
-        print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
+        debugPrint(fdLog(#file, #function))
     }
     
     // MARK: Public
-    func setGraphData(nodes nodes: [GraphNode], links: [GraphLink]) -> Bool {
+    func setGraphData(nodes: [GraphNode], links: [GraphLink]) -> Bool {
         debugPrint(fdLog(#file, #function))
         
         // Get nodeInfo
         for node in nodes {
             // Extract groupType
             guard let groupType = GroupType(rawValue: node.group) else {
-                print("Error: Failed to extract groupType. This node will be passed.")
+                debugPrint(fdLog(#file, #function, "Error: Failed to extract groupType. This node will be passed."))
                 continue
             }
             
             // Add vertex
-            let vertex = Vertex(name: node.name, group: groupType, gender: .None)
+            let vertex = Vertex(name: node.name, group: groupType, gender: .none)
             vertex.point = randomPosition(getSectionCenter(groupType.rawValue), radius: 150)
             canvas.append(vertex)
             
@@ -136,44 +136,44 @@ final class ForceDirectedGraphDataManager {
         // Get linkInfo
         for link in links {
             if canvas.count <= link.source || canvas.count <= link.target {
-                print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to add the edge. CanvasCount: \(canvas.count), source: \(link.source), target: \(link.target)")
+                debugPrint(fdLog(#file, #function, "Error: Failed to add the edge. CanvasCount: \(canvas.count), source: \(link.source), target: \(link.target)"))
                 continue
             }
             
             if addEdge(canvas[link.source], neighbor: canvas[link.target], weight: link.value) == false {
-                print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to add the edge.")
+                debugPrint(fdLog(#file, #function, "Error: Failed to add the edge."))
             }
         }
         
         return true
     }
     
-    func setGraphData(jsonfileName: String) -> Bool {
+    func setGraphData(_ jsonfileName: String) -> Bool {
         debugPrint(fdLog(#file, #function))
         
-        guard let filePath = NSBundle.mainBundle().pathForResource(jsonfileName, ofType: "json") else {
-            print("Error: Failed to get the filePath.")
+        guard let filePath = Bundle.main.path(forResource: jsonfileName, ofType: "json") else {
+            debugPrint(fdLog(#file, #function, "Error: Failed to get the filePath."))
             return false
         }
         
-        guard let data = try? NSData(contentsOfFile: filePath, options:.DataReadingMappedIfSafe) else {
-            print("Error: Failed to get a data")
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath), options:.mappedIfSafe) else {
+            debugPrint(fdLog(#file, #function, "Error: Failed to get a data"))
             return false
         }
         
         
         do {
-            guard let deserializedData = try NSJSONSerialization.JSONObjectWithData(data, options: .MutableContainers) as? [String:AnyObject] else {
-                print("Error: Failed to convert data to dictionary.")
+            guard let deserializedData = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String:AnyObject] else {
+                debugPrint(fdLog(#file, #function, "Error: Failed to convert data to dictionary."))
                 return false
             }
             
             guard let nodes = deserializedData["nodes"] as? Array<[String:AnyObject]> else {
-                print("Error: Failed to get nodeList.")
+                debugPrint(fdLog(#file, #function, "Error: Failed to get nodeList."))
                 return false
             }
             guard let links = deserializedData["links"] as? Array<[String:Int]> else {
-                print("Error: Failed to get linkList.");
+                debugPrint(fdLog(#file, #function, "Error: Failed to get linkList."))
                 return false
             }
             
@@ -182,23 +182,23 @@ final class ForceDirectedGraphDataManager {
             for node in nodes {
                 // Extract groupType
                 guard let group = node["group"] as? Int else {
-                    print("Error: Failed to get a group. This node will be passed.")
+                    debugPrint(fdLog(#file, #function, "Error: Failed to get a group. This node will be passed."))
                     continue
                 }
                 
                 guard let groupType = GroupType(rawValue: group) else {
-                    print("Error: Failed to extract groupType. This node will be passed.")
+                    debugPrint(fdLog(#file, #function, "Error: Failed to extract groupType. This node will be passed."))
                     continue
                 }
                 
                 // Extract name
                 guard let name = node["name"] as? String else {
-                    print("Error: Failed to get name. This node will be passed.")
+                    debugPrint(fdLog(#file, #function, "Error: Failed to get name. This node will be passed."))
                     continue
                 }
                 
                 // Add vertex
-                let vertex = Vertex(name: name, group: groupType, gender: .None)
+                let vertex = Vertex(name: name, group: groupType, gender: .none)
                 vertex.point = randomPosition(getSectionCenter(groupType.rawValue), radius: 150)
                 canvas.append(vertex)
                 
@@ -208,29 +208,29 @@ final class ForceDirectedGraphDataManager {
             for link in links {
                 // Extract Source
                 guard let source = link["source"] else {
-                    print("Error: Failed to get the source. This link will be passed.")
+                    debugPrint(fdLog(#file, #function, "Error: Failed to get the source. This link will be passed."))
                     continue
                 }
                 
                 // Extract target
                 guard let target = link["target"] else {
-                    print("Error: Failed to get the target. This link will be passed.")
+                    debugPrint(fdLog(#file, #function, "Error: Failed to get the target. This link will be passed."))
                     continue
                 }
                 
                 // Extract value (weight)
                 guard let value = link["value"] else {
-                    print("Error: Failed to get a value. This link will be passed.")
+                    debugPrint(fdLog(#file, #function, "Error: Failed to get a value. This link will be passed."))
                     continue
                 }
                 
                 if canvas.count <= source || canvas.count <= target {
-                    print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to add the edge. CanvasCount: \(canvas.count), source: \(source), target: \(target)")
+                    debugPrint(fdLog(#file, #function, "Error: Failed to add the edge. CanvasCount: \(canvas.count), source: \(source), target: \(target)"))
                     continue
                 }
                 
                 if addEdge(canvas[source], neighbor: canvas[target], weight: value) == false {
-                    print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to add the edge.")
+                    debugPrint(fdLog(#file, #function, "Error: Failed to add the edge."))
                 }
             }
             
@@ -242,20 +242,20 @@ final class ForceDirectedGraphDataManager {
     }
     
     func setKawadaKawaiGraph() -> Bool {
-        print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
+         debugPrint(fdLog(#file, #function))
         
         if setShortestPathMatrix() == false {
-            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set shortestPathWeight Matrix.")
+            debugPrint(fdLog(#file, #function, "Error: Failed to set shortestPathWeight Matrix."))
             return false
         }
         
         if setLMatrix() == false {
-            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set L(ideal length) Matrix.")
+            debugPrint(fdLog(#file, #function, "Error: Failed to set L(ideal length) Matrix."))
             return false
         }
         
         if setKMatrix() == false {
-            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set kMatrix.")
+            debugPrint(fdLog(#file, #function, "Error: Failed to set kMatrix."))
             return false
         }
         
@@ -334,7 +334,7 @@ final class ForceDirectedGraphDataManager {
     }
     
     // MARK: Private
-    private func addEdge(source: Vertex, neighbor: Vertex, weight: Int) -> Bool {
+    private func addEdge(_ source: Vertex, neighbor: Vertex, weight: Int) -> Bool {
         // Create a new edge
         let newEdge = Edge(neighbor: neighbor, weight: weight, visited: false)
 
@@ -353,16 +353,15 @@ final class ForceDirectedGraphDataManager {
         return true
     }
     
-    private func randomPosition(center: CGPoint, radius: Float) -> CGPoint {
+    private func randomPosition(_ center: CGPoint, radius: Float) -> CGPoint {
         let theta = Float(arc4random_uniform(UInt32.max)) / Float(UInt32.max) * Float(M_PI_2)
         let x = radius * cosf(theta)
         let y = radius * sinf(theta)
-        return CGPointMake(center.x + CGFloat(x), center.y + CGFloat(y))
+        return CGPoint(x: center.x + CGFloat(x), y: center.y + CGFloat(y))
     }
     
-    private func getSectionCenter(sectionNumber: Int) -> CGPoint {
-        
-        let sideLength = min(UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height)
+    private func getSectionCenter(_ sectionNumber: Int) -> CGPoint {
+        let sideLength = min(UIScreen.main.bounds.size.width, UIScreen.main.bounds.size.height)
         
         let horizontalCountMax = 2
         let divideNum: CGFloat = 5
@@ -378,12 +377,12 @@ final class ForceDirectedGraphDataManager {
             centerY += sideLength * (CGFloat(sectionNumber / horizontalCountMax)) + sideLength/divideNum
         }
         
-        return CGPointMake(centerX, centerY)
+        return CGPoint(x: centerX, y: centerY)
     }
     
     
     /// Undirected Dijkstra's algorithm
-    private func shortestPath(source: Vertex, destination: Vertex) -> Path? {
+    private func shortestPath(_ source: Vertex, destination: Vertex) -> Path? {
         var frontier   = [Path]()
         var finalPaths = [Path]()
         
@@ -440,7 +439,7 @@ final class ForceDirectedGraphDataManager {
             finalPaths.append(shortestPath)
             
             // Remove the bestPath from the frontier
-            frontier.removeAtIndex(pathIndex)
+            frontier.remove(at: pathIndex)
         }
         
         for path in finalPaths {
@@ -457,7 +456,7 @@ final class ForceDirectedGraphDataManager {
         return shortestPath
     }
     
-    private func farthestPath(source: Vertex, destination: Vertex) -> Path? {
+    private func farthestPath(_ source: Vertex, destination: Vertex) -> Path? {
         var frontier   = [Path]()
         var finalPaths = [Path]()
         
@@ -514,7 +513,7 @@ final class ForceDirectedGraphDataManager {
             finalPaths.append(farthestPath)
             
             // Remove the bestPath from the frontier
-            frontier.removeAtIndex(pathIndex)
+            frontier.remove(at: pathIndex)
         }
         
         for path in finalPaths {
@@ -534,10 +533,10 @@ final class ForceDirectedGraphDataManager {
     
     /// Set shortest path matrixt (d matrix)
     private func setShortestPathMatrix() -> Bool {
-        print("[\((NSString(string: "\(#file))").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
+        debugPrint(fdLog(#file, #function))
         
         // Initialize
-        shortestPathMatrix = Array(count: canvas.count, repeatedValue: Array(count: canvas.count, repeatedValue: 0))
+        shortestPathMatrix = Array(repeating: Array(repeating: 0, count: canvas.count), count: canvas.count)
         
         for i in 0..<canvas.count {
             for j in i..<canvas.count {
@@ -558,13 +557,13 @@ final class ForceDirectedGraphDataManager {
     
     /// Set L(ideal lenght) Matrix
     private func setLMatrix() -> Bool {
-        print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
+        debugPrint(fdLog(#file, #function))
         
         // Initialize
-        lMatrix =  Array(count: canvas.count, repeatedValue: Array(count: canvas.count, repeatedValue: 0))
+        lMatrix =  Array(repeating: Array(repeating: 0, count: canvas.count), count: canvas.count)
         
         // Set L metrix
-        let L0 = UIScreen.mainScreen().bounds.width > UIScreen.mainScreen().bounds.height ? Float(UIScreen.mainScreen().bounds.width) : Float(UIScreen.mainScreen().bounds.height)
+        let L0 = UIScreen.main.bounds.width > UIScreen.main.bounds.height ? Float(UIScreen.main.bounds.width) : Float(UIScreen.main.bounds.height)
         var L: Float = 0
         for i in 0..<canvas.count {
             for j in i..<canvas.count {
@@ -591,13 +590,13 @@ final class ForceDirectedGraphDataManager {
     
     /// Set K (constant) Matrixt
     private func setKMatrix() -> Bool {
-        print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)]")
+        debugPrint(fdLog(#file, #function))
         
         // Initialize
-        kMatrix = Array(count: canvas.count, repeatedValue: Array(count: canvas.count, repeatedValue: Float(0)))
+        kMatrix = Array(repeating: Array(repeating: Float(0), count: canvas.count), count: canvas.count)
         
         if shortestPathMatrix.count < canvas.count {
-            print("[\((NSString(string: "\(#file)").lastPathComponent as NSString).stringByDeletingPathExtension) \(#function)] Error: Failed to set kMatrix.")
+            debugPrint(fdLog(#file, #function, "Error: Failed to set kMatrix."))
             return false
         }
         
@@ -608,7 +607,7 @@ final class ForceDirectedGraphDataManager {
                     kMatrix[i][j] = springConstant / denominator
                 }
             }
-            print("KMatrix: \(kMatrix[i])")
+            debugPrint("KMatrix: \(kMatrix[i])")
         }
         
         return true
@@ -616,9 +615,9 @@ final class ForceDirectedGraphDataManager {
     
     /// Energy
     private func getEnergy() -> Float {
-        var energy: Float = 0
-        var dx: Float     = 0
-        var dy: Float     = 0
+        var energy: Float  = 0
+        var dx: Float      = 0
+        var dy: Float      = 0
         
         var lij: Float     = 0
         var dxdyPow: Float = 0
@@ -642,15 +641,15 @@ final class ForceDirectedGraphDataManager {
     }
     
     /// DeltaM
-    private func getDeltaM(i: Int) -> Float {
-        var dx: Float          = 0
-        var dy: Float          = 0
+    private func getDeltaM(_ i: Int) -> Float {
+        var dx: Float       = 0
+        var dy: Float       = 0
        
-        var dxdyPow: Float     = 0
-        var dxdySqrt: Float    = 0
+        var dxdyPow: Float  = 0
+        var dxdySqrt: Float = 0
         
-        var xPartial: Float    = 0
-        var yPartial: Float    = 0
+        var xPartial: Float = 0
+        var yPartial: Float = 0
         
         if lMatrix.count <= 0 {
             return 0
@@ -675,7 +674,7 @@ final class ForceDirectedGraphDataManager {
     }
     
     /// the bulk of the KK inner loop, estimates location of local minima
-    private func getDeltas(i: Int) -> CGPoint {
+    private func getDeltas(_ i: Int) -> CGPoint {
         // Solve deltaM partial eqns to figure out new position for node of index i where  delataM is close to 0 or less then epsilon
         var dx: Float     = 0
         var dy: Float     = 0

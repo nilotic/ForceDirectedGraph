@@ -8,11 +8,11 @@
 
 import Foundation
 
-func fdLog(file: String, _ function: String, _ message: String = "") -> String  {
+func fdLog(_ file: String, _ function: String, _ message: String = "") -> String  {
     var logMessage = "ForceDirectGraph"
     
     // Add file, function name
-    if let fileName = file.characters.split("/").map(String.init).last?.characters.split(".").map(String.init).first{
+    if let fileName = file.characters.split(separator: "/").map(String.init).last?.characters.split(separator: ".").map(String.init).first {
         logMessage = "\(logMessage) | \(fileName).\(function)"
     }
     
