@@ -13,8 +13,6 @@ final public class GraphScene {
     private let forceDirectedGraphScene = ForceDirectedGraphScene()
     
     public init(view: UIView) {
-        debugPrint(fdLog(#file, #function))
-        
         forceDirectedGraphScene.size = view.frame.size
         
         
@@ -33,15 +31,11 @@ final public class GraphScene {
     }
     
     public func setGraphData(_ jsonFileName: String) -> Bool {
-        debugPrint(fdLog(#file, #function))
-        
-        return forceDirectedGraphScene.setNodeList(jsonFileName)
+        forceDirectedGraphScene.setNodeList(jsonFileName)
     }
     
     public func setGraphData(_ nodes: [GraphNode], links: [GraphLink]) -> Bool {
-        debugPrint(fdLog(#file, #function))
-        
-        return forceDirectedGraphScene.setNodeList(nodes, links: links)
+        forceDirectedGraphScene.setNodeList(nodes, links: links)
     }
     
 }

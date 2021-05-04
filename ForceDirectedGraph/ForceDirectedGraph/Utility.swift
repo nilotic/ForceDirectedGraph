@@ -7,19 +7,25 @@
 //
 
 import Foundation
+import os.log
 
-func fdLog(_ file: String, _ function: String, _ message: String = "") -> String  {
-    var logMessage = "ForceDirectGraph"
+enum LogType: String {
+    case info    = "[💬]"
+    case warning = "[⚠️]"
+    case error   = "[‼️]"
+}
+
+
+func log(_ type: LogType = .error, _ message: Any?, file: String = #file, function: String = #function, line: Int = #line) {
+    #if DEBUG
+    var logMessage = ""
     
     // Add file, function name
-    if let fileName = file.characters.split(separator: "/").map(String.init).last?.characters.split(separator: ".").map(String.init).first {
-        logMessage = "\(logMessage) | \(fileName).\(function)"
+    if let filename = file.split(separator: "/").map(String.init).last?.split(separator: ".").map(String.init).first {
+        logMessage = "\(type.rawValue) [\(filename)  \(function)]\((type == .info) ? "" : " ✓\(line)")"
     }
-    
-    // Add message
-    if message != "" {
-        logMessage = "\(logMessage) | \(message)"
-    }
-    
-    return logMessage
+
+    os_log("%s", "\(logMessage)  ➜  \(message ?? "")\n ‎‎")
+    #endif
 }
+

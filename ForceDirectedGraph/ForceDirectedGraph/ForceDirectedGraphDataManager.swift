@@ -111,18 +111,18 @@ final class ForceDirectedGraphDataManager {
     // MARK: - Function
     // MARK: - Init
     init() {
-        debugPrint(fdLog(#file, #function))
+        
     }
     
     // MARK: Public
     func setGraphData(nodes: [GraphNode], links: [GraphLink]) -> Bool {
-        debugPrint(fdLog(#file, #function))
+        
         
         // Get nodeInfo
         for node in nodes {
             // Extract groupType
             guard let groupType = GroupType(rawValue: node.group) else {
-                debugPrint(fdLog(#file, #function, "Error: Failed to extract groupType. This node will be passed."))
+                log(.error, "Error: Failed to extract groupType. This node will be passed.")
                 continue
             }
             
@@ -136,12 +136,12 @@ final class ForceDirectedGraphDataManager {
         // Get linkInfo
         for link in links {
             if canvas.count <= link.source || canvas.count <= link.target {
-                debugPrint(fdLog(#file, #function, "Error: Failed to add the edge. CanvasCount: \(canvas.count), source: \(link.source), target: \(link.target)"))
+                log(.error, "Error: Failed to add the edge. CanvasCount: \(canvas.count), source: \(link.source), target: \(link.target)")
                 continue
             }
             
             if addEdge(canvas[link.source], neighbor: canvas[link.target], weight: link.value) == false {
-                debugPrint(fdLog(#file, #function, "Error: Failed to add the edge."))
+                log(.error, "Error: Failed to add the edge.")
             }
         }
         
@@ -149,31 +149,31 @@ final class ForceDirectedGraphDataManager {
     }
     
     func setGraphData(_ jsonfileName: String) -> Bool {
-        debugPrint(fdLog(#file, #function))
+        
         
         guard let filePath = Bundle.main.path(forResource: jsonfileName, ofType: "json") else {
-            debugPrint(fdLog(#file, #function, "Error: Failed to get the filePath."))
+            log(.error, "Error: Failed to get the filePath.")
             return false
         }
         
         guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath), options:.mappedIfSafe) else {
-            debugPrint(fdLog(#file, #function, "Error: Failed to get a data"))
+            log(.error, "Error: Failed to get a data")
             return false
         }
         
         
         do {
             guard let deserializedData = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String:AnyObject] else {
-                debugPrint(fdLog(#file, #function, "Error: Failed to convert data to dictionary."))
+                log(.error, "Error: Failed to convert data to dictionary.")
                 return false
             }
             
             guard let nodes = deserializedData["nodes"] as? Array<[String:AnyObject]> else {
-                debugPrint(fdLog(#file, #function, "Error: Failed to get nodeList."))
+                log(.error, "Error: Failed to get nodeList.")
                 return false
             }
             guard let links = deserializedData["links"] as? Array<[String:Int]> else {
-                debugPrint(fdLog(#file, #function, "Error: Failed to get linkList."))
+                log(.error, "Error: Failed to get linkList.")
                 return false
             }
             
@@ -182,18 +182,18 @@ final class ForceDirectedGraphDataManager {
             for node in nodes {
                 // Extract groupType
                 guard let group = node["group"] as? Int else {
-                    debugPrint(fdLog(#file, #function, "Error: Failed to get a group. This node will be passed."))
+                    log(.error, "Error: Failed to get a group. This node will be passed.")
                     continue
                 }
                 
                 guard let groupType = GroupType(rawValue: group) else {
-                    debugPrint(fdLog(#file, #function, "Error: Failed to extract groupType. This node will be passed."))
+                    log(.error, "Error: Failed to extract groupType. This node will be passed.")
                     continue
                 }
                 
                 // Extract name
                 guard let name = node["name"] as? String else {
-                    debugPrint(fdLog(#file, #function, "Error: Failed to get name. This node will be passed."))
+                    log(.error, "Error: Failed to get name. This node will be passed.")
                     continue
                 }
                 
@@ -208,29 +208,29 @@ final class ForceDirectedGraphDataManager {
             for link in links {
                 // Extract Source
                 guard let source = link["source"] else {
-                    debugPrint(fdLog(#file, #function, "Error: Failed to get the source. This link will be passed."))
+                    log(.error, "Error: Failed to get the source. This link will be passed.")
                     continue
                 }
                 
                 // Extract target
                 guard let target = link["target"] else {
-                    debugPrint(fdLog(#file, #function, "Error: Failed to get the target. This link will be passed."))
+                    log(.error, "Error: Failed to get the target. This link will be passed.")
                     continue
                 }
                 
                 // Extract value (weight)
                 guard let value = link["value"] else {
-                    debugPrint(fdLog(#file, #function, "Error: Failed to get a value. This link will be passed."))
+                    log(.error, "Error: Failed to get a value. This link will be passed.")
                     continue
                 }
                 
                 if canvas.count <= source || canvas.count <= target {
-                    debugPrint(fdLog(#file, #function, "Error: Failed to add the edge. CanvasCount: \(canvas.count), source: \(source), target: \(target)"))
+                    log(.error, "Error: Failed to add the edge. CanvasCount: \(canvas.count), source: \(source), target: \(target)")
                     continue
                 }
                 
                 if addEdge(canvas[source], neighbor: canvas[target], weight: value) == false {
-                    debugPrint(fdLog(#file, #function, "Error: Failed to add the edge."))
+                    log(.error, "Error: Failed to add the edge.")
                 }
             }
             
@@ -242,20 +242,20 @@ final class ForceDirectedGraphDataManager {
     }
     
     func setKawadaKawaiGraph() -> Bool {
-         debugPrint(fdLog(#file, #function))
+         
         
         if setShortestPathMatrix() == false {
-            debugPrint(fdLog(#file, #function, "Error: Failed to set shortestPathWeight Matrix."))
+            log(.error, "Error: Failed to set shortestPathWeight Matrix.")
             return false
         }
         
         if setLMatrix() == false {
-            debugPrint(fdLog(#file, #function, "Error: Failed to set L(ideal length) Matrix."))
+            log(.error, "Error: Failed to set L(ideal length) Matrix.")
             return false
         }
         
         if setKMatrix() == false {
-            debugPrint(fdLog(#file, #function, "Error: Failed to set kMatrix."))
+            log(.error, "Error: Failed to set kMatrix.")
             return false
         }
         
@@ -533,7 +533,7 @@ final class ForceDirectedGraphDataManager {
     
     /// Set shortest path matrixt (d matrix)
     private func setShortestPathMatrix() -> Bool {
-        debugPrint(fdLog(#file, #function))
+        
         
         // Initialize
         shortestPathMatrix = Array(repeating: Array(repeating: 0, count: canvas.count), count: canvas.count)
@@ -557,7 +557,7 @@ final class ForceDirectedGraphDataManager {
     
     /// Set L(ideal lenght) Matrix
     private func setLMatrix() -> Bool {
-        debugPrint(fdLog(#file, #function))
+        
         
         // Initialize
         lMatrix =  Array(repeating: Array(repeating: 0, count: canvas.count), count: canvas.count)
@@ -590,13 +590,13 @@ final class ForceDirectedGraphDataManager {
     
     /// Set K (constant) Matrixt
     private func setKMatrix() -> Bool {
-        debugPrint(fdLog(#file, #function))
+        
         
         // Initialize
         kMatrix = Array(repeating: Array(repeating: Float(0), count: canvas.count), count: canvas.count)
         
         if shortestPathMatrix.count < canvas.count {
-            debugPrint(fdLog(#file, #function, "Error: Failed to set kMatrix."))
+            log(.error, "Error: Failed to set kMatrix.")
             return false
         }
         
