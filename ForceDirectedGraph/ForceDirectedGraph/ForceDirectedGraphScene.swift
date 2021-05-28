@@ -52,17 +52,16 @@ enum PhysicsCategoryType: UInt32 {
 
 final public class ForceDirectedGraphScene: SKScene {
     
-    // DataManager
-    fileprivate let forceDirectedGraphDataManager = ForceDirectedGraphDataManager()
-    
     // MARK: - Value
-    // MARK: - Private
+    // MARK: Private
+    private let dataManager = ForceDirectedGraphDataManager()
+    
     private let radius: CGFloat             = 10.0
     private let centerCircleRadius :CGFloat = 26.0
     
-    private var jointInfoArray        = [JointInfo]()
-    private var selectedNode: SKNode? = nil
-    private var touchedLocation       = CGPoint(x: 0 ,y: 0)
+    private var jointInfoArray           = [JointInfo]()
+    private var selectedNode: SKNode?    = nil
+    private var touchedLocation: CGPoint = .zero
     
     fileprivate let cameraNode         = SKCameraNode()
     private let pinchGestureRecognizer = UIPinchGestureRecognizer()
@@ -72,58 +71,57 @@ final public class ForceDirectedGraphScene: SKScene {
     // MARK: - Function
     // MARK: - Public
     func setNodeList(_ jsonFileName: String) -> Bool {
-        
-        
-        if forceDirectedGraphDataManager.setGraphData(jsonFileName) == false {
+        guard dataManager.setGraphData(jsonFileName) else {
             log(.error, "Error: Failed to set data.")
+            return false
         }
         
-        if forceDirectedGraphDataManager.setKawadaKawaiGraph() == false {
+        guard dataManager.setKawadaKawaiGraph() else {
             log(.error, "Error: Failed to set kawadaKawai graph.")
+            return false
         }
+        
         
         // Add nodes
-        for vertex in forceDirectedGraphDataManager.canvas {
-            self.addChild(createNode(vertex))
+        for vertex in dataManager.canvas {
+            addChild(createNode(vertex))
         }
         
-        
         // Set links
-        for vertex in forceDirectedGraphDataManager.canvas {
-            setLink(vertex)
+        for vertex in dataManager.canvas {
+            setLink(vertex: vertex)
         }
         
         return true
     }
     
-    
     func setNodeList(_ nodes: [GraphNode], links: [GraphLink]) -> Bool {
-        
-        
-        if forceDirectedGraphDataManager.setGraphData(nodes: nodes, links: links) == false {
+        guard dataManager.setGraphData(nodes: nodes, links: links) else {
             log(.error, "Error: Failed to set data.")
+            return false
         }
         
-        if forceDirectedGraphDataManager.setKawadaKawaiGraph() == false {
+        guard dataManager.setKawadaKawaiGraph() else {
             log(.error, "Error: Failed to set kawadaKawai graph.")
+            return false
         }
+        
         
         // Add nodes
-        for vertex in forceDirectedGraphDataManager.canvas {
-            self.addChild(createNode(vertex))
+        for vertex in dataManager.canvas {
+            addChild(createNode(vertex))
         }
         
-        
         // Set links
-        for vertex in forceDirectedGraphDataManager.canvas {
-            setLink(vertex)
+        for vertex in dataManager.canvas {
+            setLink(vertex: vertex)
         }
 
         return true
     }
     
     
-    // MARK: - Private 
+    // MARK: Private
     private func selectNodeForTouch(_ touchLocation: CGPoint) {
         let touchedNode = self.atPoint(touchLocation)
         
@@ -134,10 +132,7 @@ final public class ForceDirectedGraphScene: SKScene {
     }
     
     private func panForTranslation(_ translation: CGPoint) {
-        guard let position = selectedNode?.position else {
-            return
-        }
-        
+        guard let position = selectedNode?.position else { return }
         selectedNode?.position = CGPoint(x: position.x + translation.x, y: position.y + translation.y)
     }
     
@@ -145,16 +140,16 @@ final public class ForceDirectedGraphScene: SKScene {
     override public func didMove(to view: SKView) {
         /* Setup your scene here */
 
-        self.scene?.backgroundColor = UIColor.white
-        self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
-        let physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
-        self.physicsBody = physicsBody
+        scene?.backgroundColor = UIColor.white
+        physicsWorld.gravity = CGVector(dx: 0, dy: 0)
+        
+        physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
         
         let ratio:CGFloat = 3.0
-        self.size = CGSize(width: UIScreen.main.bounds.size.width * ratio, height: UIScreen.main.bounds.size.height * ratio)
+        size = CGSize(width: UIScreen.main.bounds.size.width * ratio, height: UIScreen.main.bounds.size.height * ratio)
         
-        self.addChild(cameraNode)
-        self.camera = cameraNode
+        addChild(cameraNode)
+        camera = cameraNode
         
         // Gesture
         pinchGestureRecognizer.addTarget(self, action: #selector(pinchGestureRecognizerAction(_:)))
@@ -256,8 +251,7 @@ final public class ForceDirectedGraphScene: SKScene {
         return circleNode
     }
     
-    private func setLink(_ vertex: Vertex) -> Bool {
-        
+    private func setLink(vertex: Vertex) {
         for edge in vertex.neighbors {
             // Line
             let pathToDraw = CGMutablePath()
@@ -284,8 +278,6 @@ final public class ForceDirectedGraphScene: SKScene {
             self.jointInfoArray.append(JointInfo(joint: spring, line: line))
 
         }
-        
-        return true
     }
     
     fileprivate func centerOnNode(_ node: SKNode) -> Bool {
